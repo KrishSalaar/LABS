@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Helium Gas Simulation</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: Arial, sans-serif;
+    }
+    #container {
+      display: flex;
+    }
+    canvas {
+      border: 1px solid black;
+    }
+    .info {
+      margin-left: 20px;
+    }
+    .info-box {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Helium Gas Simulation</h1>
+  <div id="container">
+    <canvas id="gasContainer" width="600" height="400"></canvas>
+    <div class="info">
+      <div class="info-box">
+        <h2>Kinetic Theory of Gases</h2>
+        <p>The temperature of a gas is related to the average kinetic energy of its molecules:</p>
+        <p><strong>T = (2/3) * (KE_avg / k)</strong></p>
+        <p>where:</p>
+        <ul>
+          <li><strong>T</strong>: Temperature (K)</li>
+          <li><strong>KE_avg</strong>: Average kinetic energy (J)</li>
+          <li><strong>k</strong>: Boltzmann constant (1.38×10⁻²³ J/K)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script>
+// Basic 2D simulation of helium gas molecules with van der Waals forces
+const canvas = document.getElementById('gasContainer');
+const ctx = canvas.getContext('2d');
+const width = canvas.width;
+const height = canvas.height;
+
+const NUM_MOLECULES = 100;
+const RADIUS = 5; // Molecule radius
+const MASS = 6.64e-27; // Mass of a helium molecule in kg
+const BOLTZMANN_CONSTANT = 1.38e-23;
+const COLLISION_DAMPING = 0.9; // Loss of energy in collisions
+const MAX_INITIAL_SPEED = 200; // Initial speed in pixels/second
+const van_der_Waals_constant = 1e-22; // Example constant for attractive force
+
+let molecules = [];
+let temperature = 300; // Initial temperature in Kelvin
+
+// Initialize molecules
+for (let i = 0; i < NUM_MOLECULES; i++) {
+  molecules.push({
+    x: Math.random() * (width - 2 * RADIUS) + RADIUS,
+    y: Math.random() * (height - 2 * RADIUS) + RADIUS,
+    vx: (Math.random() - 0.5) * MAX_INITIAL_SPEED,
+    vy: (Math.random() - 0.5) * MAX_INITIAL_SPEED
+  });
+}
+
+function calculateTemperature() {
+  let totalKE = 0;
+  molecules.forEach(m => {
+    totalKE += 0.5 * MASS * (m.vx ** 2 + m.vy ** 2);
+  });
+  return (2 / 3) * (totalKE / NUM_MOLECULES) / BOLTZMANN_CONSTANT;
+}
+
+function applyVanDerWaalsForces() {
+  for (let i = 0; i < NUM_MOLECULES; i++) {
+    for (let j = i + 1; j < NUM_MOLECULES; j++) {
+      const dx = molecules[j].x - molecules[i].x;
+      const dy = molecules[j].y - molecules[i].y;
+      const distance = Math.sqrt(dx ** 2 + dy ** 2);
+      if (distance < 2 * RADIUS) {
+        // Elastic collision
+        const overlap = 2 * RADIUS - distance;
+        const force = overlap * COLLISION_DAMPING;
+        molecules[i].vx -= (dx / distance) * force;
+        molecules[i].vy -= (dy / distance) * force;
+        molecules[j].vx += (dx / distance) * force;
+        molecules[j].vy += (dy / distance) * force;
+      } else {
+        // Attractive van der Waals forces
+        const force = van_der_Waals_constant / (distance ** 6);
+        molecules[i].vx += (dx / distance) * force;
+        molecules[i].vy += (dy / distance) * force;
+        molecules[j].vx -= (dx / distance) * force;
+        molecules[j].vy -= (dy / distance) * force;
+      }
+    }
+  }
+}
+
+function updatePositions(deltaTime) {
+  molecules.forEach(m => {
+    m.x += m.vx * deltaTime;
+    m.y += m.vy * deltaTime;
+
+    // Reflect off walls
+    if (m.x < RADIUS || m.x > width - RADIUS) {
+      m.vx *= -1;
+    }
+    if (m.y < RADIUS || m.y > height - RADIUS) {
+      m.vy *= -1;
+    }
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = 'blue';
+  molecules.forEach(m => {
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.fillStyle = 'black';
+  ctx.font = '16px Arial';
+  ctx.fillText(`Temperature: ${temperature.toFixed(2)} K`, 10, height - 10);
+}
+
+let lastTime = performance.now();
+function loop(currentTime) {
+  const deltaTime = (currentTime - lastTime) / 1000; // In seconds
+  lastTime = currentTime;
+
+  applyVanDerWaalsForces();
+  updatePositions(deltaTime);
+  temperature = calculateTemperature();
+  draw();
+
+  requestAnimationFrame(loop);
+}
+
+loop(lastTime);
+  </script>
+</body>
+</html>
