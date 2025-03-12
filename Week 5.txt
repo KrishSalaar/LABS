@@ -1,0 +1,36 @@
+5788a0d383e743a4b4d078e0a4fe66d6
+https://dlcdn.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+/usr/lib/jvm/java-17-openjdk-amd64
+user specific environment and startup programs
+PATH=$PATH:$HOME/bin:$JAVA_HOME:M2_HOME:$M2
+
+import PATH
+
+to come out press "esc" or ":wq"
+
+echo $PATH // at first it wont give any path of maven so we have to source the path 
+HOW TO SOURCE PATH
+source.profile // now you get maven path
+
+// to know maven is present anywhere straight away from root COMMAND is -> mvn -v
+
+Jenkins -> Dahsboard -> Manage Jenkins -> plugins type for Maven //Install Maven in GUI
+
+Jenkins -> Dahsboard -> Manage Jenkins -> Tools -> add JDK (need to give path and also name that path as java-17)
+
+echo $PATH // to get path 
+
+after getting path copy till amd64 and paste under add JDK
+
+Same do this for maven aslo then maven integration is setup -> Apply -> Save
+
+Create a new Item in Jenkins -> name is as "FirstMavenProject" -> select Maven -> in Big Box type same First Maven Project
+
+give github URL of your account under source code management you y default get pom.xml file
+
+under goals and options type "clean install" -> Apply > Save
+
+you get FirstMavenProject -> Build , if you want to know the progress press on 3 dots then progress is visible
+
+
+
