@@ -1,0 +1,31 @@
+{
+  "Workflows": [
+    {
+      "Path": null,
+      "SortBy": 0,
+      "VariablesSectionElementsOrder": [],
+      "ArgumentsSectionElementsOrder": null,
+      "ConstantsSectionElementsOrder": [],
+      "AddedNamespaces": null
+    },
+    {
+      "Path": "Main.xaml",
+      "SortBy": 0,
+      "VariablesSectionElementsOrder": [
+        "text&Sequence_1",
+        "data&Sequence_3",
+        "str_output&Sequence_3",
+        "EmailID&Sequence_2",
+        "Name&Sequence_2",
+        "Comments&Sequence_2",
+        "TestType&Sequence_2",
+        "TestResult&Sequence_2",
+        "Region&Sequence_2",
+        "Testdate&Sequence_2"
+      ],
+      "ArgumentsSectionElementsOrder": [],
+      "ConstantsSectionElementsOrder": [],
+      "AddedNamespaces": null
+    }
+  ]
+}
